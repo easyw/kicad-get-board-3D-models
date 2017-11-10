@@ -1,5 +1,10 @@
 # kicad-get-board-3D-models
 
+What are for:
+------------
+These tools will download/update ONLY the 3D models needed by a kicad_pcb board, as defined in the board footprints.
+This can be handful when using standard KiCad footprints, that have pre-configured 3D models.
+
 #### Very initial release: 
 The script can be launched ATM only on win OS
 
