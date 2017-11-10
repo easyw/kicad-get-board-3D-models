@@ -38,7 +38,7 @@ Parameters
 
 **NB** if you configure force_update="/u" your old 3D models will get overwrite without confirmation
  
-**Hint:** if your kicad 3D models folder is in 'Program' or 'usr/share/' or '/Library/Application Support/' folder, you need to run this batch/script as Administrator
+**Hint:** if your kicad 3D models folder is in 'Program' or '/usr/share/' or '/Library/Application Support/' folder, you need to run this batch/script as Administrator
 
 
 ### License
