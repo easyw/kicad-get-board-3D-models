@@ -4,7 +4,7 @@
 # licence GPL 2
 # copyright easyw
 
-__version__='1.2'
+__version__='1.2.2'
 
 
 import codecs
@@ -79,14 +79,32 @@ def collect_models(fn, kv, k3d, fupd):
         found=False
         d1=d.replace('\\','/')
         #d1=d1.rstrip('/') 
-        d1=d1.lstrip('${KISYS3DMOD}/')
+        if 'KISYS3DMOD' in d1:
+            d1=d1.lstrip('${KISYS3DMOD}/')
+            d1=d1.lstrip('/')
+        d=d1
+        local=False
+        #print d1
+        if 'KIPRJMOD' in d1:
+            #print 'LOCAL'
+            #stop
+            local=True
+            d1=d1.lstrip('${KIPRJMOD}')
+            d1=d1.lstrip('/')
+            print d1
         d=d1
         if d not in parsed:
-            fOut.write(KISYS3DMOD+os.sep+d+u'.wrl'+ os.linesep)
+            if local:
+                fOut.write(d+u'.wrl'+ os.linesep)
+                directory=d1
+                prefix=""
+            else:
+                fOut.write(KISYS3DMOD+os.sep+d+u'.wrl'+ os.linesep)
+                directory=KISYS3DMOD+os.sep+d1
+                prefix=KISYS3DMOD+os.sep
             #print d1
             #stop
             d1=d1[0:d1.rindex('/')]
-            directory=KISYS3DMOD+os.sep+d1
             #print 'd, d1, dir'
             #print d
             #print d1
@@ -98,13 +116,13 @@ def collect_models(fn, kv, k3d, fupd):
                 except:
                     print 'you need Administrative rights'
                     continue
-            if os.path.exists(KISYS3DMOD+os.sep+d+u'.wrl'):
+            if os.path.exists(prefix+d+u'.wrl'):
+                found=True
                 print u'exists '+d+u'.wrl'
                 #fOut.write(d)
                 #fOut.write('\n')
-                found=True
             if not found or overwrite:
-                fileDest=KISYS3DMOD+os.sep+d+u'.wrl'
+                fileDest=prefix+d+u'.wrl'
                 d1=d.replace('\\','/')
                 try:
                     response = urllib2.urlopen(github_src+d1+u'.wrl', context=ctx)
@@ -119,14 +137,14 @@ def collect_models(fn, kv, k3d, fupd):
                 #print myfile
                 
             found=False
-            if os.path.exists(KISYS3DMOD+os.sep+d+u'.step') or os.path.exists(KISYS3DMOD+os.sep+d+u'.STEP') or \
-                                                os.path.exists(KISYS3DMOD+os.sep+d+u'.stp') or os.path.exists(KISYS3DMOD+os.sep+d+u'.STP'):
+            if os.path.exists(prefix+d+u'.step') or os.path.exists(prefix+d+u'.STEP') or \
+                                                os.path.exists(prefix+d+u'.stp') or os.path.exists(prefix+d+u'.STP'):
                 print u'exists '+d+u'.step'
                 #fOut.write(d)
                 #fOut.write('\n')
                 found=True
             if not found or overwrite:
-                fileDest=KISYS3DMOD+os.sep+d+u'.step'
+                fileDest=prefix+d+u'.step'
                 d1=d.replace('\\','/')
                 #print github_src+d1+u'.step'
                 try:
@@ -160,7 +178,7 @@ if len(args) >= 4:
         print 'forcing download and override all 3D models'
     else:    
         print
-    if kicad_ver==4:
+    if kicad_ver=='4':
         github_src=ur'https://github.com/KiCad/kicad-library/raw/master/modules/packages3d/'
         gh_base=ur'https://github.com/KiCad/kicad-library/modules/packages3d/'
     else:
