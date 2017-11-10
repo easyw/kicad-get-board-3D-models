@@ -24,7 +24,7 @@ if [%1] == [] (echo using internal configured 'kicad_pcb' file) else (set kicad_
 
 ::set force_update="/u"
 :: set force_upd=/u for overwrite old release of 3D models, 
-set force_update=/u
+set force_update=
 :: set force_update= for download only missing models
 
 ::if "%kicad_version%"=="4" (set kicad_lib=%kicad_folder%\share\kicad\modules\packages3d) else (set kicad_lib=%kicad_folder%\share\kicad\modules\packages3d)
