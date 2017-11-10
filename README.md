@@ -22,6 +22,8 @@ Parameters
   (i.e. kicad_board="c:\Temp\blinky.kicad_pcb")
 - force_update
   (i.e. force_update="/u" to force overwriting local 3D models from github lib; leave it empty to download only missing 3D models)
+  
+'*kicad_pcb*' file can be passed also as parameter (you must use a full file path then) 
 
 **NB** if you configure force_update="/u" your old 3D models will get overwrite without confirmation
  
