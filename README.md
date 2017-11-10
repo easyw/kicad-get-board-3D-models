@@ -1,6 +1,6 @@
 # kicad-get-board-3D-models
 
-###Very initial release: 
+#### Very initial release: 
 The script can be launched ATM only on win OS
 
 
