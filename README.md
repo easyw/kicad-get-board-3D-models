@@ -8,6 +8,12 @@ This can be handful when using standard KiCad footprints, that have pre-configur
 #### Very initial release: 
 The script can be launched ATM only on win OS
 
+Just configure your parameters inside the '*.bat*' file and launch `collect3Dmod.bat`
+
+For Linux or Osx one must use the command line as for example:
+
+`python list_models.py your_kicad_3D_folder 4 your_kicad_board_full_file_path`
+
 
 Installing
 ----------
