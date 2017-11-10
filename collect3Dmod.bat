@@ -18,7 +18,7 @@ set kicad_version="4"
 set kicad_board="c:\Temp\blinky.kicad_pcb"
 :: the kicad_pcb file full path you want to fetch
 :: you can also pass this as parameter to the batch file
-if "%1"=="" (echo using internal configured 'kicad_pcb' file) else (set kicad_board=%1)
+if %1=="" (echo using internal configured 'kicad_pcb' file) else (set kicad_board=%1)
 
 ::set force_update="/u"
 :: set force_upd=/u for overwrite old release of 3D models, 
