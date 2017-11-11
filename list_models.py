@@ -4,9 +4,15 @@
 # licence GPL 2
 # copyright easyw
 
+
+from __future__ import print_function
+# This must be the first statement before other statements.
+# You may only put a quoted or triple quoted string, 
+# Python comments, other future statements, or blank lines before the __future__ line.
+
 __version__='1.2.2'
 
-# Update test by Greg Smith
+# Added print() function, so it can be overridden (later). 
 
 import codecs
 import re,os, sys
@@ -36,7 +42,7 @@ import argparse
 
 args=sys.argv
 #for a in args:
-#    print a
+#    print(a)
 
     
 def collect_models(fn, kv, k3d, fupd):
@@ -70,7 +76,7 @@ def collect_models(fn, kv, k3d, fupd):
     model_list2 = re.findall(r'\(model\s+(.+?)\.STEP',data)
     model_list=model_list+model_list2
     
-    #print model_list
+    #print(model_list)
     
     fOut=codecs.open(fileOut, mode='wb', encoding='utf-8', errors='replace', buffering=1)
     
@@ -85,14 +91,14 @@ def collect_models(fn, kv, k3d, fupd):
             d1=d1.lstrip('/')
         d=d1
         local=False
-        #print d1
+        #print(d1)
         if 'KIPRJMOD' in d1:
-            #print 'LOCAL'
+            #print('LOCAL')
             #stop
             local=True
             d1=d1.lstrip('${KIPRJMOD}')
             d1=d1.lstrip('/')
-            print d1
+            print(d1)
         d=d1
         if d not in parsed:
             if local:
@@ -103,28 +109,28 @@ def collect_models(fn, kv, k3d, fupd):
                 fOut.write(KISYS3DMOD+os.sep+d+u'.wrl'+ os.linesep)
                 directory=KISYS3DMOD+os.sep+d1
                 prefix=KISYS3DMOD+os.sep
-            #print d1
+            #print(d1)
             ##stop
-            #print d1.rfind('/')
+            #print(d1.rfind('/'))
             #stop
             if d1.rfind('/')!=-1:
                 d1=d1[0:d1.rindex('/')]
             #else:
                 
-            #print 'd, d1, dir'
-            #print d
-            #print d1
-            #print directory
+            #print('d, d1, dir')
+            #print(d)
+            #print(d1)
+            #print(directory)
             #stop
             if not os.path.exists(directory):
                 try:
                     os.makedirs(directory)
                 except:
-                    print 'you need Administrative rights'
+                    print('you need Administrative rights')
                     continue
             if os.path.exists(prefix+d+u'.wrl'):
                 found=True
-                print u'exists '+d+u'.wrl'
+                print(u'exists '+d+u'.wrl')
                 #fOut.write(d)
                 #fOut.write('\n')
             if not found or overwrite:
@@ -135,40 +141,40 @@ def collect_models(fn, kv, k3d, fupd):
                     myfile = response.read()
                     f_dest=codecs.open(fileDest, mode='wb', encoding='utf-8', errors='replace', buffering=1)
                     f_dest.write(myfile)
-                    print fileDest + ur' written'
+                    print(fileDest + ur' written')
                 except:
-                    print 'error file not found'
-                    print github_src+d1+u'.wrl'
-                    print 'or you may need Administrative rights'
-                #print myfile
+                    print('error file not found')
+                    print(github_src+d1+u'.wrl')
+                    print('or you may need Administrative rights')
+                #print(myfile)
                 
             found=False
             if os.path.exists(prefix+d+u'.step') or os.path.exists(prefix+d+u'.STEP') or \
                                                 os.path.exists(prefix+d+u'.stp') or os.path.exists(prefix+d+u'.STP'):
-                print u'exists '+d+u'.step'
+                print(u'exists '+d+u'.step')
                 #fOut.write(d)
                 #fOut.write('\n')
                 found=True
             if not found or overwrite:
                 fileDest=prefix+d+u'.step'
                 d1=d.replace('\\','/')
-                #print github_src+d1+u'.step'
+                #print(github_src+d1+u'.step')
                 try:
                     response = urllib2.urlopen(github_src+d1+u'.step', context=ctx)
                     myfile = response.read()
                     f_dest=codecs.open(fileDest, mode='wb', encoding='utf-8', errors='replace', buffering=1)
                     f_dest.write(myfile)
-                    print fileDest + ur' written'
+                    print(fileDest + ur' written')
                 except:
-                    print 'error file not found'
-                    print github_src+d1+u'.step'
-                    print 'or you may need Administrative rights'
-                #print myfile
+                    print('error file not found')
+                    print(github_src+d1+u'.step')
+                    print('or you may need Administrative rights')
+                #print(myfile)
                 #fOut.write('\n')
             parsed.append(d)
         
     fOut.close()
-    #print model_list2
+    #print(model_list2)
 ##
 
 if len(args) >= 4:
@@ -178,22 +184,22 @@ if len(args) >= 4:
     force_upd=None
     if len(args) == 5:
         force_upd=args[4]
-    print args[1],args[2],args[3]
+    print(args[1],args[2],args[3])
     if force_upd is not None:
-        print
-        print 'forcing download and override all 3D models'
+        print()
+        print('forcing download and override all 3D models')
     else:    
-        print
+        print()
     if kicad_ver=='4':
         github_src=ur'https://github.com/KiCad/kicad-library/raw/master/modules/packages3d/'
         gh_base=ur'https://github.com/KiCad/kicad-library/modules/packages3d/'
     else:
         github_src=ur'https://github.com/KiCad/kicad-packages3D/raw/master/'
         gh_base=ur'https://github.com/KiCad/kicad-packages3D/'
-    print
-    print 'collecting packages from:'
-    print gh_base
-    print
+    print()
+    print('collecting packages from:')
+    print(gh_base)
+    print()
     
     collect_models(filename, kicad_ver, KISYS3DMOD, force_upd)
 
