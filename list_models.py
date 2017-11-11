@@ -6,6 +6,7 @@
 
 __version__='1.2.2'
 
+# Update test by Greg Smith
 
 import codecs
 import re,os, sys
