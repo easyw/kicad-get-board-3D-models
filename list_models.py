@@ -103,8 +103,13 @@ def collect_models(fn, kv, k3d, fupd):
                 directory=KISYS3DMOD+os.sep+d1
                 prefix=KISYS3DMOD+os.sep
             #print d1
+            ##stop
+            #print d1.rfind('/')
             #stop
-            d1=d1[0:d1.rindex('/')]
+            if d1.rfind('/')!=-1:
+                d1=d1[0:d1.rindex('/')]
+            #else:
+                
             #print 'd, d1, dir'
             #print d
             #print d1
