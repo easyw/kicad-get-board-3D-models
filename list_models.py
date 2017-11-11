@@ -4,21 +4,124 @@
 # licence GPL 2
 # copyright easyw
 
-
 from __future__ import print_function
 # This must be the first statement before other statements.
 # You may only put a quoted or triple quoted string, 
 # Python comments, other future statements, or blank lines before the __future__ line.
 
-__version__='1.2.2'
 
-# Added print() function, so it can be overridden (later). 
+__version__='1.2.2'
 
 import codecs
 import re,os, sys
 
 import urllib2
 import ssl
+
+try:
+    import __builtin__
+except ImportError:
+    # Python 3
+    import builtins as __builtin__
+
+def print(*args, **kwargs):
+    """My custom print() function."""
+    # Adding new arguments to the print function signature 
+    # is probably a bad idea.
+    # Instead consider testing if custom argument keywords
+    # are present in kwargs
+    for arg in args:
+        _consoleText.AppendText(str(arg)+' ')
+
+    if not kwargs.get('noreturn',None):
+        _consoleText.AppendText('\n')
+    # __builtin__.print('My overridden print() function!')
+    # return __builtin__.print(*args, **kwargs)
+
+
+import pcbnew
+import wx
+
+
+def FindWindowByTitle(title,startwindow=None):
+    """UI convenience function to find the GUI window by the beginning of its title.
+       If startwindow is unspecified, search from the top level windows."""
+    if startwindow is None:
+        startwindow = wx.GetTopLevelWindows()
+    window = filter(lambda w: w.GetTitle().startswith(title), startwindow)
+    if len(window) != 1:
+        raise Exception("Cannot find %s window from title."%title)        
+    return window[0]
+
+def FindWindowByName(name,startwindow=None):
+    """UI convenience function to find the GUI window by the beginning of its name.
+       If startwindow is unspecified, search from the top level windows."""
+    if startwindow is None:
+        startwindow = wx.GetTopLevelWindows()
+    window = filter(lambda w: w.Name.startswith(name), startwindow)
+    if len(window) != 1:
+        raise Exception("Cannot find %s window from name."%name)
+    return window[0]
+
+
+class aplugin(pcbnew.ActionPlugin):
+    """implements ActionPlugin"""
+    def __init__(self):
+        self.defaults()
+        
+    def defaults(self):
+        self.name = "Update 3d Model Library"
+        self.category = "Library"
+        self.description = "Update pcb referenced 3d libraries."
+    # def Run(self,event):
+        # _consoleText = FindWindowByName("text",
+        # startwindow=FindWindowByName("KicadFrame").GetChildren())
+        
+        # _consoleText.AppendText("Instance Hello!")
+
+instance = aplugin()
+_pcbnewWindow = None
+_consoleText = None
+kicad_ver = None
+def InstallMenuItem():
+    """The main function to run when imported. Creates the menu
+       and a variety of variables pointing to the graphic windows needed
+       later in the code."""
+    global instance, _pcbnewWindow, _consoleText, kicad_ver
+    MenuItemName = instance.name # "Update 3d Model Library"
+    _pcbnewWindow = FindWindowByTitle("Pcbnew")
+    _consoleText = FindWindowByName("text",
+        startwindow=FindWindowByName("KicadFrame").GetChildren())
+    #_consoleText.AppendText("Starting Run()...\n")
+    menuBar = _pcbnewWindow.MenuBar
+    # add the menu item under Tools menu
+    
+    toolsMenu = menuBar.GetMenu(menuBar.FindMenu("Tools"))
+    existingItem = toolsMenu.FindItem("External Plugins")
+    # If the External Plugins menu exists, then this was loaded as an ActionScript
+    if existingItem != -1:
+        kicad_ver = 5 # or nightly
+        return
+    else:
+        kicad_ver = 4
+    
+    existingItem = toolsMenu.FindItem(MenuItemName)
+    if existingItem != -1:
+        _consoleText.AppendText("Deleting existing menuitem.\n")
+        toolsMenu.Delete(existingItem)
+    MenuItem = toolsMenu.Append(wx.ID_ANY, MenuItemName)
+    
+    if hasattr(instance,'Run'):
+        run = instance.Run
+    else:
+        run = Run
+    breturn = _pcbnewWindow.Bind(wx.EVT_MENU, run, MenuItem)
+    # _id = wx.NewId()
+    # subMenuObject.Append(_id, title, statustext)
+    # wx.EVT_MENU(self, _id, action)
+    _consoleText.AppendText('Bind returned:%s'%str(breturn))
+    _consoleText.AppendText('Finished Installation')
+    
 
 ctx = ssl.create_default_context()
 ctx.check_hostname = False
@@ -38,9 +141,9 @@ filename=ur"C:\Temp\blinky-dev.kicad_pcb"
 filename=filename.replace('\\','/')
 
 
-import argparse
+# import argparse
 
-args=sys.argv
+# args=sys.argv
 #for a in args:
 #    print(a)
 
@@ -176,15 +279,18 @@ def collect_models(fn, kv, k3d, fupd):
     fOut.close()
     #print(model_list2)
 ##
-
-if len(args) >= 4:
-    KISYS3DMOD=args[1]
-    kicad_ver=args[2]
-    filename=args[3]
+kicad_ver = None
+# Function to be executed when menu item is clicked.
+def Run(event):
+    global kicad_ver,KISYS3DMOD
+    #if len(args) >= 4:
+    #KISYS3DMOD=args[1]
+    #kicad_ver=None #args[2]
+    filename=pcbnew.GetBoard().GetFilename() # args[3]
     force_upd=None
-    if len(args) == 5:
-        force_upd=args[4]
-    print(args[1],args[2],args[3])
+    # if len(args) == 5:
+        # force_upd=args[4]
+    # print(args[1],args[2],args[3])
     if force_upd is not None:
         print()
         print('forcing download and override all 3D models')
@@ -204,3 +310,16 @@ if len(args) >= 4:
     collect_models(filename, kicad_ver, KISYS3DMOD, force_upd)
 
 
+# invoke only when run as a script, not as import
+if __name__ == "__main__":
+    InstallMenuItem()
+else:
+    # The above should work (currently untested) with Action Menu
+    # (KiCAD compiled with KICAD_SCRIPTING_ACTION_MENU)
+    # However, in KiCAD builds without ACTION_MENU enabled, the following
+    # is a workaround that allows "import kipadcheck" to enable the menu item.
+    InstallMenuItem()
+
+# register through Action Script when imported
+instance.register()
+#instance.Run()
