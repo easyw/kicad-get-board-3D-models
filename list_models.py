@@ -282,9 +282,13 @@ def collect_models(fn, kv, k3d, fupd):
 kicad_ver = None
 # Function to be executed when menu item is clicked.
 def Run(event):
-    global kicad_ver,KISYS3DMOD
+    global kicad_ver
     #if len(args) >= 4:
-    #KISYS3DMOD=args[1]
+    # ['KICAD_SYMBOL_DIR', 'KISYS3DMOD', 'KICAD_PTEMPLATES', 'KISYSMOD', 'KIGITHUB', 'KIPRJMOD']
+    KISYS3DMOD = os.environ.get('KISYS3DMOD',None)
+    if KISYS3DMOD is None:
+        print ('Environment variable KISYS3DMOD is not set.')
+
     #kicad_ver=None #args[2]
     filename=pcbnew.GetBoard().GetFilename() # args[3]
     force_upd=None
