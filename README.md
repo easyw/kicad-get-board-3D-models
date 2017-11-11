@@ -24,7 +24,7 @@ Installing
 Parameters
 ----------
 - kicad_python
-  (i.e. kicad_folder="C:\Program Files\KiCad\bin\python")
+  (i.e. kicad_python="C:\Program Files\KiCad\bin\python")
 - kicad_3D_folder 
   (i.e. kicad_3D_folder="C:\Program Files\KiCad\share\kicad\modules\packages3d")
 - kicad_version
