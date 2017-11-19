@@ -4,7 +4,7 @@
 # licence GPL 2
 # copyright easyw
 
-__version__='1.2.2'
+__version__='1.2.3'
 
 
 import codecs
@@ -38,7 +38,7 @@ args=sys.argv
 #    print a
 
     
-def collect_models(fn, kv, k3d, fupd):
+def collect_models(fn, kv, k3d, kprj, fupd):
     """collect models from GH for the present pcb"""
     
     global fileOut
@@ -97,12 +97,17 @@ def collect_models(fn, kv, k3d, fupd):
             if local:
                 fOut.write(d+u'.wrl'+ os.linesep)
                 directory=d1
-                prefix=""
+                #directory=directory.rstrip('/')
+                prefix=KIPRJMOD+os.sep
             else:
                 fOut.write(KISYS3DMOD+os.sep+d+u'.wrl'+ os.linesep)
                 directory=KISYS3DMOD+os.sep+d1
+                #directory=directory.rstrip('/')
                 prefix=KISYS3DMOD+os.sep
-            #print d1
+            if directory.rfind('/')!=-1:
+                directory=directory[0:directory.rindex('/')]
+            directory=os.path.join(prefix,directory)
+            print 'dir '+directory
             ##stop
             #print d1.rfind('/')
             #stop
@@ -175,6 +180,8 @@ if len(args) >= 4:
     kicad_ver=args[2]
     filename=args[3]
     force_upd=None
+    KIPRJMOD = os.path.dirname(filename)
+    print 'KIPRJ= ', KIPRJMOD
     if len(args) == 5:
         force_upd=args[4]
     print args[1],args[2],args[3]
@@ -194,6 +201,6 @@ if len(args) >= 4:
     print gh_base
     print
     
-    collect_models(filename, kicad_ver, KISYS3DMOD, force_upd)
+    collect_models(filename, kicad_ver, KISYS3DMOD, KIPRJMOD, force_upd)
 
 
